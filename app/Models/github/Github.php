@@ -52,5 +52,6 @@ class Github extends Model
         'url',
         'latitude',
         'longitude',
+        'country'
     ];
 }

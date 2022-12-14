@@ -38,6 +38,11 @@ class Github implements ShouldQueue
             case 'github-insert-user':
                 $githubController = new GithubController();
                 $githubController->store($this->data);
+                \DB::table('github_users_status')
+                ->where('table', 'github_users')
+                ->update(
+                    ['updated_at' => date('Y-m-d'), 'status' => 1]
+                );
                 break;
             default:
                 # code...

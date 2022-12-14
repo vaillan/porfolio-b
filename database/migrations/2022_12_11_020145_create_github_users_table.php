@@ -47,8 +47,9 @@ class CreateGithubUsersTable extends Migration
             $table->string('type')->nullable(1);
             $table->date('org_updated_at')->nullable(1);
             $table->string('url')->nullable(1);
-            $table->decimal('latitude',13,10);
-            $table->decimal('longitude',13,10);
+            $table->text('latitude');
+            $table->text('longitude');
+            $table->string('country');
             $table->timestamps();
             $table->softDeletes();
         });

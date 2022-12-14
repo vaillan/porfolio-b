@@ -23,6 +23,10 @@ class GithubProcessController extends Controller
             $user['org_updated_at'] = Carbon::parse($user['org_updated_at'])->format('Y-m-d');
             $user['org_created_at'] = Carbon::parse($user['org_created_at'])->format('Y-m-d');
             $_request->user = $user;
+            \DB::table('github_users_status')->updateOrInsert(
+                ['id' => 1, 'table' => 'github_users'],
+                ['created_at' => date('Y-m-d'), 'updated_at' => date('Y-m-d'), 'status' => 0]
+            );
             $githubJob = new Github($_request, 'github-insert-user');
             dispatch($githubJob);
             return response()->json(['msg' => 'Added']);

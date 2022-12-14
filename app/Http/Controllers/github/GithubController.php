@@ -6,7 +6,6 @@ use Symfony\Component\HttpFoundation\Response;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\github\Github;
-use Carbon\Carbon;
 
 class GithubController extends Controller
 {
@@ -17,7 +16,8 @@ class GithubController extends Controller
      */
     public function index()
     {
-        //
+        $GithubUsers = Github::paginate(100);
+        return response()->json(['users' => $GithubUsers]);
     }
 
     /**
@@ -78,4 +78,7 @@ class GithubController extends Controller
     {
         return response()->json(['user' => Github::latest()->first()]);
     }
+
+
+
 }
