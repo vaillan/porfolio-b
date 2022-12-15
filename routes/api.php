@@ -24,3 +24,4 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('/get-last-user', [GithubController::class, 'getLastUser']);
 Route::post('/insert-user', [GithubProcessController::class, 'insertGihubUser']);
 Route::get('/get-users-github-stored',[GithubController::class, 'index']);
+Route::post('/insert-globe-users-graphos', [GithubProcessController::class, 'createGithubGraphos']);

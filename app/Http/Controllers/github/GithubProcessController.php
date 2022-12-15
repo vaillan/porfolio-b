@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Jobs\Github;
 use App\Http\Controllers\github\GithubController;
 use Carbon\Carbon;
-
+use Illuminate\Support\Facades\DB;
 class GithubProcessController extends Controller
 {
     /**
@@ -16,7 +16,8 @@ class GithubProcessController extends Controller
      * @param Request $request
      * @return \Illuminate\Http\Response
      */
-    public function insertGihubUser(Request $request) {
+    public function insertGihubUser(Request $request)
+    {
         try {
             $_request = new Request();
             $user = $request->user;
@@ -30,7 +31,20 @@ class GithubProcessController extends Controller
             $githubJob = new Github($_request, 'github-insert-user');
             dispatch($githubJob);
             return response()->json(['msg' => 'Added']);
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
+            return response()->json(['msg' => $e], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function createGithubGraphos(Request $request)
+    {
+        try {
+            $_request = new Request();
+            DB::table('globle_users_graphyc')->truncate();
+            $githubJob = new Github($_request, 'graphos');
+            dispatch($githubJob);
+            return response()->json(['msg' => 'Process added']);
+        } catch (\Exception $e) {
             return response()->json(['msg' => $e], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }

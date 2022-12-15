@@ -39,10 +39,14 @@ class Github implements ShouldQueue
                 $githubController = new GithubController();
                 $githubController->store($this->data);
                 \DB::table('github_users_status')
-                ->where('table', 'github_users')
-                ->update(
-                    ['updated_at' => date('Y-m-d'), 'status' => 1]
-                );
+                    ->where('table', 'github_users')
+                    ->update(
+                        ['updated_at' => date('Y-m-d'), 'status' => 1]
+                    );
+                break;
+            case 'graphos':
+                $githubController = new GithubController();
+                $githubController->createGlobeGraphosUsers($this->data);
                 break;
             default:
                 # code...
