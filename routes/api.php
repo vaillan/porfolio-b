@@ -23,6 +23,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //Rutas sin necesidad de permisos
 Route::get('/get-last-user', [GithubController::class, 'getLastUser']);
 Route::post('/insert-user', [GithubProcessController::class, 'insertGihubUser']);
-Route::get('/get-users-github-stored',[GithubController::class, 'index']);
+Route::get('/get-users-github-stored', [GithubController::class, 'index']);
 Route::post('/insert-globe-users-graphos', [GithubProcessController::class, 'createGithubGraphos']);
-Route::get('/get-github-globe-users',[GithubController::class, 'getGithubGlobeUsers']);
+Route::get('/get-github-globe-users', [GithubController::class, 'getGithubGlobeUsers']);
+Route::get('/get-github-globe-users-location', [GithubController::class, 'getGithubGlobeUsersLocation']);

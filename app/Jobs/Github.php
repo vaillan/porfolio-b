@@ -48,6 +48,10 @@ class Github implements ShouldQueue
                 $githubController = new GithubController();
                 $githubController->createGlobeGraphosUsers($this->data);
                 break;
+            case 'location':
+                $githubController = new GithubController();
+                $githubController->createGithuGlobeUsersLocation($this->data);
+                break;
             default:
                 # code...
                 break;

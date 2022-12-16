@@ -8,7 +8,7 @@ use Illuminate\Http\Request;
 use App\Models\github\Github;
 use Illuminate\Support\Facades\DB;
 use App\Models\github\GithubGlobe;
-
+use App\Models\github\GithubGlobeUsersLocation;
 class GithubController extends Controller
 {
     /**
@@ -99,7 +99,7 @@ class GithubController extends Controller
             });
             return $query;
         } catch (\Exception $e) {
-            return response()->json(['msg' => $e], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return response()->json(['msg' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -138,5 +138,37 @@ class GithubController extends Controller
     public function getGithubGlobeUsers(Request $request)
     {
         return response()->json(['type' => 'usersCollection', 'users' => GithubGlobe::all()]);
+    }
+
+    public function createGithuGlobeUsersLocation(Request $request) 
+    {
+        try {
+            $query = DB::transaction(function () {
+                $githubUsers = (Github::all())->groupBy('country');
+                $githubUsers->each(function ($user, $key) {
+                    $_user = ($user->all())[0];
+                    $orientation = (($_user->id + 1) % 2)  == 0 ? 'top' : 'right';
+                    DB::table('github_location_users')->insert([
+                        'orientation' => $orientation,
+                        'size' => 1.0,
+                        'location' => $_user->location,
+                        'country' => $_user->country,
+                        'lat' => $_user->latitude,
+                        'lng' => $_user->longitude,
+                        'created_at' => date('Y-m-d'),
+                        'updated_at' => date('Y-m-d')
+                    ]);
+                });
+                return response()->json(['msg' => 'Ok']);
+            });
+            return $query;
+        }catch (\Exception $e) {
+            return response()->json(['msg' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function getGithubGlobeUsersLocation(Request $request)
+    {
+        return response()->json(['type' => 'locationCollection', 'locations' => GithubGlobeUsersLocation::all()]);
     }
 }

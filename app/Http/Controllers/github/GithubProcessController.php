@@ -41,8 +41,14 @@ class GithubProcessController extends Controller
         try {
             $_request = new Request();
             DB::table('globle_users_graphyc')->truncate();
-            $githubJob = new Github($_request, 'graphos');
-            dispatch($githubJob);
+            DB::table('github_location_users')->truncate();
+
+            $githubJob1 = new Github($_request, 'graphos');
+            dispatch($githubJob1);
+
+            $githubJob2 = new Github($_request, 'location');
+            dispatch($githubJob2);
+
             return response()->json(['msg' => 'Process added']);
         } catch (\Exception $e) {
             return response()->json(['msg' => $e], Response::HTTP_INTERNAL_SERVER_ERROR);
