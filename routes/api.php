@@ -25,3 +25,4 @@ Route::get('/get-last-user', [GithubController::class, 'getLastUser']);
 Route::post('/insert-user', [GithubProcessController::class, 'insertGihubUser']);
 Route::get('/get-users-github-stored',[GithubController::class, 'index']);
 Route::post('/insert-globe-users-graphos', [GithubProcessController::class, 'createGithubGraphos']);
+Route::get('/get-github-globe-users',[GithubController::class, 'getGithubGlobeUsers']);

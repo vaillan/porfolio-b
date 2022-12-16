@@ -90,15 +90,10 @@ class GithubController extends Controller
                 $chunkGithubUsers = $githubUser->chunk($totalUsers);
                 if ($chunkGithubUsers->count() == 2) {
                     if ($chunkGithubUsers[0]->count() > $chunkGithubUsers[1]->count()) {
-                        $first = 0;
-                        $second = 1;
-                        $this->insert($chunkGithubUsers, $first, $second);
+                        $this->insert($chunkGithubUsers, 0, 1);
                     } else {
-                        $first = 1;
-                        $second = 0;
-                        $this->insert($chunkGithubUsers, $first, $second);
+                        $this->insert($chunkGithubUsers, 1, 0);
                     }
-
                 }
                 return response()->json(['Ok']);
             });
@@ -108,32 +103,40 @@ class GithubController extends Controller
         }
     }
 
-    private function insert($chunkGithubUsers, $first, $second) {
-        $chunkGithubUsers[$first]->each(function ($user, $key) {
-            DB::table('globle_users_graphyc')->insert([
+    private function insert($chunkGithubUsers, $first, $second)
+    {
+        $mA = $chunkGithubUsers[$first];
+        $mB = $chunkGithubUsers[$second];
+        $mBKey = (($mB->keys())->all())[0];
+        $mA->each(function ($user, $key) use ($mB, &$mBKey) {
+            $id = DB::table('globle_users_graphyc')->insertGetId([
                 'order' => ($key + 1),
                 'startUser' => $user->name,
                 'type' => $user->type,
                 'startLat' => $user->latitude,
                 'startLng' => $user->longitude,
-                'status' => true,
+                'status' => (($key + 1) % 2) == 0 ? true : false,
                 'date' => $user->org_updated_at,
                 'created_at' => $user->org_updated_at,
                 'updated_at' => $user->org_updated_at
             ]);
+            $_user = $mB->all();
+            if(isset($_user[$mBKey])) {
+                DB::table('globle_users_graphyc')->where('id', $id)->update(
+                    [
+                        'endUser' => $_user[$mBKey]->name,
+                        'endLat' => $_user[$mBKey]->latitude,
+                        'endLng' => $_user[$mBKey]->longitude,
+                        'updated_at' => $_user[$mBKey]->updated_at
+                    ]
+                );
+                $mBKey = $mBKey + 1;
+            }
         });
+    }
 
-        $chunkGithubUsers[$second]->each(function ($user) {
-                if(isset($user)) {
-                    DB::table('globle_users_graphyc')->where('endUser', null)->where('status', true)->update(
-                        [
-                            'endUser' => $user->name,
-                            'endLat' => $user->latitude,
-                            'endLng' => $user->longitude,
-                            'updated_at' => $user->updated_at
-                        ]
-                    );
-                }
-        });
+    public function getGithubGlobeUsers(Request $request)
+    {
+        return response()->json(['type' => 'usersCollection', 'users' => GithubGlobe::all()]);
     }
 }
