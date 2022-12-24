@@ -8,6 +8,7 @@ use App\Jobs\Github;
 use App\Http\Controllers\github\GithubController;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Symfony\Component\HttpFoundation\Response;
 class GithubProcessController extends Controller
 {
     /**

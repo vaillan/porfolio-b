@@ -9,6 +9,7 @@ use App\Models\github\Github;
 use Illuminate\Support\Facades\DB;
 use App\Models\github\GithubGlobe;
 use App\Models\github\GithubGlobeUsersLocation;
+
 class GithubController extends Controller
 {
     /**
@@ -121,7 +122,7 @@ class GithubController extends Controller
                 'updated_at' => $user->org_updated_at
             ]);
             $_user = $mB->all();
-            if(isset($_user[$mBKey])) {
+            if (isset($_user[$mBKey])) {
                 DB::table('globle_users_graphyc')->where('id', $id)->update(
                     [
                         'endUser' => $_user[$mBKey]->name,
@@ -140,7 +141,7 @@ class GithubController extends Controller
         return response()->json(['type' => 'usersCollection', 'users' => GithubGlobe::all()]);
     }
 
-    public function createGithuGlobeUsersLocation(Request $request) 
+    public function createGithuGlobeUsersLocation(Request $request)
     {
         try {
             $query = DB::transaction(function () {
@@ -162,7 +163,7 @@ class GithubController extends Controller
                 return response()->json(['msg' => 'Ok']);
             });
             return $query;
-        }catch (\Exception $e) {
+        } catch (\Exception $e) {
             return response()->json(['msg' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
     }
@@ -170,5 +171,26 @@ class GithubController extends Controller
     public function getGithubGlobeUsersLocation(Request $request)
     {
         return response()->json(['type' => 'locationCollection', 'locations' => GithubGlobeUsersLocation::all()]);
+    }
+
+    public function getLineGraphyc(Request $request)
+    {
+        try {
+            $githubUsers = (Github::all())->groupBy('country');
+            $githubUsers = ($githubUsers->map(function ($githubUser) {
+                return $githubUser->count();
+            }));
+            return response()->json(['type' => 'githubObject', 'data' => $githubUsers]);
+        } catch (\Exception $e) {
+            return response()->json(['msg' => $e->getMessage()], Response::HTTP_INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    public function getLineGraphycByFollowers(Request $request) {
+        $githubUsers = (Github::all())->groupBy('country');
+        $githubUsers = ($githubUsers->map(function ($githubUserGroup) {
+            return $githubUserGroup->sum('followers');
+        }));
+        return response()->json(['type' => 'githubObject', 'data' => $githubUsers]);
     }
 }

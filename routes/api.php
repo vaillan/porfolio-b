@@ -27,3 +27,5 @@ Route::get('/get-users-github-stored', [GithubController::class, 'index']);
 Route::post('/insert-globe-users-graphos', [GithubProcessController::class, 'createGithubGraphos']);
 Route::get('/get-github-globe-users', [GithubController::class, 'getGithubGlobeUsers']);
 Route::get('/get-github-globe-users-location', [GithubController::class, 'getGithubGlobeUsersLocation']);
+Route::get('/get-github-line-graphyc-accounts',[GithubController::class, 'getLineGraphyc']);
+Route::get('/get-github-line-graphyc-followers',[GithubController::class, 'getLineGraphycByFollowers']);
